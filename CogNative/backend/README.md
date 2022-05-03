@@ -15,18 +15,12 @@ Sentences translated into other languages: https://tatoeba.org/en/
 
 ## Currently Supported Languages
 
-- english (US)
-- english-GB (UK)
-- english-AU (Australia)
-- japanese
-- chinese (Mandarin)
-- spanish (Mexico)
-- spanish-ES (Spain)
+- english
+- spanish
 - french
 - german
-- arabic (Saudi Arabia)
-- arabic (Iraq)
-- turkish
+- arabic
+- swedish
 
 ## Developer Note
 

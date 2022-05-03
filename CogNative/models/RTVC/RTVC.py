@@ -19,19 +19,12 @@ import numpy as np
 import librosa
 import os
 
-lang = {
-    "english": "english_",
-    "spanish": "spanish_",
-    "swedish": "swedish_",
-    "german": "german_"
-}
-
 class RTVC:
-    def __init__(self, path_to_models, src_lang):
+    def __init__(self, src_lang):
         # SET UP PRETRAINED MODEL PATHS
-        enc_weights = Path(path_to_models + f"/{lang[src_lang]}encoder.pt")
-        voc_weights = Path(path_to_models + "/vocoder.pt")
-        synth_dir = Path(path_to_models + "/synthesizer.pt")
+        enc_weights = Path(f"CogNative/models/RTVC/saved_models/default/{src_lang}_encoder.pt")
+        voc_weights = Path("CogNative/models/RTVC/saved_models/default/vocoder.pt")
+        synth_dir = Path("CogNative/models/RTVC/saved_models/default/synthesizer.pt")
 
         # LOAD PRETRAINED MODELS
         encoder.load_model(enc_weights)
@@ -52,7 +45,7 @@ class RTVC:
         in_wav = Path(self.file_path)
         assert os.path.exists(in_wav), "ERROR: File not found."
 
-        print(colorize("Loading requested file...", 'success'))
+        print(colorize("Encoding voice...", 'success'))
 
         # SYNTHESIZE EXPECTED OUTPUT WAVEFORM
         enc_wav = audio.preprocess_wav(in_wav)
@@ -80,8 +73,8 @@ class RTVC:
 
     def get_embedding_path(self):
         """Returns the embedding file location."""
-        file_path_fmt = str(self.file_path).replace('/', ';').replace('\\', ';')
-        embedding_path = f"examples/saved_embeds/{file_path_fmt}.ckpt"
+        file_path_fmt = str(self.file_path).replace('\\', '/').split('/')[-1]
+        embedding_path = f"CogNative/examples/saved_embeds/{file_path_fmt}.ckpt"
         return embedding_path
 
     def synthesize(self, text, out_path):
@@ -100,7 +93,7 @@ class RTVC:
             aud.save_wav(gen_wav, out_f)
 
             rate, data = wavfile.read(out_path)
-            reduced_noise = nr.reduce_noise(y=data, sr=rate, prop_decrease=0.75)
+            reduced_noise = nr.reduce_noise(y=data, sr=rate, prop_decrease=0.7)
             wavfile.write(out_path, rate, reduced_noise)
 
 

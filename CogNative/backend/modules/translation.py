@@ -1,6 +1,6 @@
 from googletrans import Translator
 
-from modules import languages
+from .languages import available_languages
 
 
 class translation:
@@ -11,24 +11,37 @@ class translation:
         """This function ensures that the source language and
         destination language are supported by this module."""
 
-        if lang not in languages.available_languages.keys():
+        if lang not in available_languages.keys():
             raise (Exception("Please select a supported language."))
 
-        return languages.available_languages[lang]["translation"]
+        return available_languages[lang]["translation"]
 
-    def translate(self, text, src, des):
+    def translate(self, text, src, dest):
         """This function requires both source and destination languages."""
 
         src = self.convert_language(src)
-        des = self.convert_language(des)
+        dest = self.convert_language(dest)
 
-        result = self.translator.translate(text, src=src, dest=des)
+        result = self.translator.translate(text, src=src, dest=dest)
         return result.text
 
-    def translate_to(self, text, des):
+    def translate_to(self, text, dest):
         """This function auto-detects the source language."""
 
-        des = self.convert_language(des)
+        dest = self.convert_language(dest)
 
-        result = self.translator.translate(text, dest=des)
+        result = self.translator.translate(text, dest=dest)
         return result.text
+
+    def current_language(self, text):
+        if len(text) > 500:
+            lang = self.translator.detect(text[0:500]).lang
+        else:
+            lang = self.translator.detect(text).lang
+        
+        # Convert language code to full name of language
+        lang_keys = list(available_languages.keys())
+        lang_codes = [available_languages[x]["translation"] for x in lang_keys]
+        for i in range(len(lang_codes)):
+            if lang_codes[i] == lang:
+                self.source_language = lang_keys[i]
